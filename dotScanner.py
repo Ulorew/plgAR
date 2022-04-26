@@ -33,8 +33,7 @@ def findCenter (frame, color_low, color_high, out):
         return (0,0), color_mask
 
 
-df=pd.DataFrame({'p1x':[],'p1y':[],'p2x':[],'p2y':[],
-                         'p3x':[],'p3y':[],'p4x':[],'p4y':[],'cx':[],'cy':[]})
+df=pd.DataFrame({'p1x':[],'p1y':[],'p2x':[],'p2y':[],'p3x':[],'p3y':[],'p4x':[],'p4y':[]})
 
 saveId=0
 
@@ -55,10 +54,8 @@ while True:
     if (key>=0):
         print(key)
     if key == 112:
-        cdC=((cdR[0]+cdY[0]+cdG[0]+cdP[0])/4,(cdR[1]+cdY[1]+cdG[1]+cdP[1])/4)
         newCol=pd.DataFrame({'p1x':[cdR[0]],'p1y':[cdR[1]],'p2x':[cdY[0]],'p2y':[cdY[1]],
-                             'p3x':[cdG[0]],'p3y':[cdG[1]],'p4x':[cdP[0]],'p4y':[cdP[1]],
-                             'cx':[cdC[0]],'cy':[cdC[1]]},{saveId})
+                             'p3x':[cdG[0]],'p3y':[cdG[1]],'p4x':[cdP[0]],'p4y':[cdP[1]]})
         df=pd.concat([df,newCol])
         saveId+=1
     
