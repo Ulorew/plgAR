@@ -66,8 +66,8 @@ while True:
         cdC=((cdR[0]+cdY[0]+cdG[0]+cdP[0])/4,(cdR[1]+cdY[1]+cdG[1]+cdP[1])/4)
         newPt=pnd.DataFrame({'px':[cdR[0]-cdC[0],cdY[0]-cdC[0],cdG[0]-cdC[0],cdP[0]-cdC[0]],
         'py':[cdR[1]-cdC[1],cdY[1]-cdC[1],cdG[1]-cdC[1],cdP[1]-cdC[1]],
-        'x_':[(cdR[0]-pl)/w,(cdY[0]-pl)/w,(cdG[0]-pl)/w,(cdP[0]-pl)/w],
-        'y_':[(cdR[1]-pu)/h,(cdY[1]-pu)/h,(cdG[1]-pu)/h,(cdP[1]-pu)/h]})
+        'x_':[(cdR[0]-cdC[0])/w,(cdY[0]-cdC[0])/w,(cdG[0]-cdC[0])/w,(cdP[0]-cdC[0])/w],
+        'y_':[(cdR[1]-cdC[1])/h,(cdY[1]-cdC[1])/h,(cdG[1]-cdC[1])/h,(cdP[1]-cdC[1])/h]})
         df=pnd.concat([df,newPt])
         saveId+=4
     

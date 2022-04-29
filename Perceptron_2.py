@@ -38,29 +38,56 @@ df=pd.read_csv('plgData.csv',header=0)
 df.iloc[1:]=df.astype(float)
 print(df.head(10))
 
-trainSz=int(len(df)*3/4)
+trainSz=len(df)
+#trainSz=int(len(df)*3/4)
 
-ppnX=Perceptron(eta=0.1,n_iter=10)
-X=df.iloc[:trainSz,[1,2]].values
-y=np.rint(df.iloc[:trainSz,[3]].values)
+X=df.iloc[1:trainSz,[1,2]].values
 
-print(X)
-print(y)
+pnUp=Perceptron(eta=0.1,n_iter=10)
+pnDown=Perceptron(eta=0.1,n_iter=10)
+pnLeft=Perceptron(eta=0.1,n_iter=10)
+pnRight=Perceptron(eta=0.1,n_iter=10)
 
-ppnX.fit(X,y)
+y=df.iloc[:trainSz,[3,4]].values
+
+yUp=np.where(y[1]<0,1,-1)
+yDown=np.where(y[1]>=0,1,-1)
+yRight=np.where(y[0]>=0,1,-1)
+yLeft=np.where(y[0]<0,1,-1)
 
 
+pnUp.fit(X,yUp)
+pnDown.fit(X,yDown)
+pnRight.fit(X,yRight)
+pnLeft.fit(X,yLeft)
+
+
+'''
 ppnY=Perceptron(eta=0.1,n_iter=10)
 X=df.iloc[:trainSz,[1,2]].values
 y=np.rint(df.iloc[:trainSz,[4]].values)
 
-ppnY.fit(X,y)
+ppnY.fit(X,y)'''
+y=(df.iloc[:trainSz,[3]].values)
+#Xp=pd.DataFrame(list(map(np.ravel, [v for i, v in zip(range(len(X)),X) if True])))
+Xp=np.array([v.tolist() for i, v in zip(range(len(X)),X) if y[i]>=0])
+Xn=np.array([v.tolist() for i, v in zip(range(len(X)),X) if y[i]<0])
+
+print('Xp and Xn:')
+print(Xp)
+print(Xn)
+
+plt.scatter(Xp[:,0],Xp[:,1],color='red',marker='o',label='top thing')
+plt.scatter(Xn[:,0],Xn[:,1],color='blue',marker='x',label='down thing')
+plt.legend(loc='upper left')
+plt.show()
+
 
 plt.plot(range(1,len(ppnX.errors_)+1),ppnX.errors_,marker='o')
 plt.show()
 
-plt.plot(range(1,len(ppnY.errors_)+1),ppnY.errors_,marker='o')
-plt.show()
+'''plt.plot(range(1,len(ppnY.errors_)+1),ppnY.errors_,marker='o')
+plt.show()'''
 
 '''y=df.iloc[0:100,4].values
 y=np.where(y=='Iris-setosa',-1,1)
