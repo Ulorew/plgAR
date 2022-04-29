@@ -32,9 +32,37 @@ class Perceptron():
     def predict(self, X):
         return np.where(self.net_input(X)>=0.0,1,-1)
 
-df=pd.read_csv('iris.csv',header=None)
-print(df.head())
-y=df.iloc[0:100,4].values
+
+
+df=pd.read_csv('plgData.csv',header=0)
+df.iloc[1:]=df.astype(float)
+print(df.head(10))
+
+trainSz=int(len(df)*3/4)
+
+ppnX=Perceptron(eta=0.1,n_iter=10)
+X=df.iloc[:trainSz,[1,2]].values
+y=np.rint(df.iloc[:trainSz,[3]].values)
+
+print(X)
+print(y)
+
+ppnX.fit(X,y)
+
+
+ppnY=Perceptron(eta=0.1,n_iter=10)
+X=df.iloc[:trainSz,[1,2]].values
+y=np.rint(df.iloc[:trainSz,[4]].values)
+
+ppnY.fit(X,y)
+
+plt.plot(range(1,len(ppnX.errors_)+1),ppnX.errors_,marker='o')
+plt.show()
+
+plt.plot(range(1,len(ppnY.errors_)+1),ppnY.errors_,marker='o')
+plt.show()
+
+'''y=df.iloc[0:100,4].values
 y=np.where(y=='Iris-setosa',-1,1)
 X=df.iloc[0:100,[0,2]].values
 print(X)
@@ -51,5 +79,6 @@ ppn.fit(X,y)
 
 plt.plot(range(1,len(ppn.errors_)+1),ppn.errors_,marker='o')
 plt.show()
-
+'''
          
+
