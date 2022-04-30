@@ -1,7 +1,7 @@
 import cv2
-import random as rd
+import numpy as np
 import pandas as pnd
-
+from Perceptron_2 import pnUp, pnDown, pnLeft, pnRight
 
 cap = cv2.VideoCapture(0)
 
@@ -35,41 +35,61 @@ def findCenter (frame, color_low, color_high, out):
 
 df=pnd.DataFrame({'px':[],'py':[], 'x_':[],'y_':[]})
 
-saveId=0
-
 while True:
     rf, frame = cap.read()
     
     frame_HSV = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+
+    cols=[[(150,90,70), (180,255,255)],[(15,110,110), (40,255,255)],[(30,30,40), (80,255,255)],[(135,100,70), (165,255,255)]]
+    pts=[]
+    for i in cols:
+        pts.append(list(findCenter (frame_HSV, i[0], i[1], frame)[0]))
+
+    pts=np.asarray(pts)
+
+   
+    cdC=[0,0]
+        
+    for i in pts:
+        cdC[0]+=i[0]
+        cdC[1]+=i[1]
+    cdC[0]/=len(pts)
+    cdC[1]/=len(pts)
+
+    relpts=pts[:]-cdC
+        
+    for pos, relpos in zip(pts,relpts):
+        status=''
+        vUp, vDown, vRight, vLeft=pnUp.predict(relpos), pnDown.predict(relpos), pnRight.predict(relpos), pnLeft.predict(relpos)        
+        if vUp>0:
+            status+='top '
+        if vDown>0:
+            status+='bottom '
+        if vRight>0:
+            status+='right '
+        if vLeft>0:
+            status+='left '
+        cv2.putText(frame,status,(pos[0],pos[1]),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),2,cv2.LINE_AA)
     
-    cdR, mask = findCenter (frame_HSV, (170,110,70), (180,255,255), frame)
 
-    cdY, mask = findCenter (frame_HSV, (15,110,110), (40,255,255), frame)
-
-    cdG, mask = findCenter (frame_HSV, (40,100,50), (80,255,255), frame)
-
-    cdP, mask = findCenter (frame_HSV, (135,100,70), (165,255,255), frame)
 
     key = cv2.waitKey(1)
     if (key>=0):
         print(key)
     if key == 112:
-
-        pl=min(cdR[0],cdY[0],cdG[0],cdP[0])
-        pr=max(cdR[0],cdY[0],cdG[0],cdP[0])
-        pu=min(cdR[1],cdY[1],cdG[1],cdP[1])
-        pd=max(cdR[1],cdY[1],cdG[1],cdP[1])
+        pl=min(pts[:,0])
+        pr=max(pts[:,0])
+        pu=min(pts[:,1])
+        pd=max(pts[:,1])
+           
         h=pd-pu
         w=pr-pl
 
 
-        cdC=((cdR[0]+cdY[0]+cdG[0]+cdP[0])/4,(cdR[1]+cdY[1]+cdG[1]+cdP[1])/4)
-        newPt=pnd.DataFrame({'px':[cdR[0]-cdC[0],cdY[0]-cdC[0],cdG[0]-cdC[0],cdP[0]-cdC[0]],
-        'py':[cdR[1]-cdC[1],cdY[1]-cdC[1],cdG[1]-cdC[1],cdP[1]-cdC[1]],
-        'x_':[(cdR[0]-cdC[0])/w,(cdY[0]-cdC[0])/w,(cdG[0]-cdC[0])/w,(cdP[0]-cdC[0])/w],
-        'y_':[(cdR[1]-cdC[1])/h,(cdY[1]-cdC[1])/h,(cdG[1]-cdC[1])/h,(cdP[1]-cdC[1])/h]})
+
+        newPt=pnd.DataFrame({'px':pts[:,0],'py':pts[:,1],'x_':pts[:,0]/w,'y_':pts[:,1]/h})
         df=pnd.concat([df,newPt])
-        saveId+=4
+        
     
     
     '''
@@ -89,7 +109,8 @@ while True:
     cv2.imshow('main', frame)
     if key == 27:
         break
-df.to_csv('plgData.csv')
+if (len(df)>3):
+    df.to_csv('plgData.csv')
 cv2.destroyAllWindows()
 cap.release()
 
