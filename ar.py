@@ -81,12 +81,6 @@ def onEvent(event, x, y, flags, param):
         minL=intList(minL)
         maxL=intList(maxL)
 
-        #minL=(int(min(flat(area[:,:,0]))),4,6)        
-        #maxL=(179,255.4,255)
-
-        #print(type(cols[curPnt]),type(cols[curPnt][0]))
-        #print(flat(area_hsv[:,:,0]))
-
 
         cols[curPnt]=[tuple(minL),tuple(maxL)]
         
